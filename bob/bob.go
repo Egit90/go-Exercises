@@ -5,34 +5,37 @@ import (
 	"unicode"
 )
 
+type Remark struct {
+	remark string
+}
+
+func (r Remark) isItQuestion() bool {
+	return len(r.remark) > 0 && r.remark[len(r.remark)-1] == '?'
+}
+func (r Remark) isItYell() bool {
+	haveLetter := strings.IndexFunc(r.remark, unicode.IsLetter) >= 0
+	capital := strings.ToUpper(r.remark) == r.remark
+	return haveLetter && capital
+
+}
+func (r Remark) isItFineByHim() bool {
+	return strings.TrimSpace(r.remark) == ""
+}
+
 func Hey(remark string) string {
-	isQustion := isItQuestion(remark)
-	isYelling := isItYell(remark)
-	if isQustion && !isYelling {
+	r := Remark{strings.TrimSpace(remark)}
+	isQuestion := r.isItQuestion()
+	isYelling := r.isItYell()
+
+	if isQuestion && !isYelling {
 		return "Sure."
-	} else if isQustion && isYelling {
+	} else if isQuestion && isYelling {
 		return "Calm down, I know what I'm doing!"
 	} else if isYelling {
 		return "Whoa, chill out!"
-	} else if isItFineByHim(remark) {
+	} else if r.isItFineByHim() {
 		return "Fine. Be that way!"
 	} else {
 		return "Whatever."
 	}
-}
-
-func isItQuestion(input string) bool {
-	input = strings.TrimSpace(input)
-	return len(input) > 0 && input[len(input)-1] == '?'
-}
-
-func isItYell(input string) bool {
-	haveLetter := strings.IndexFunc(input, unicode.IsLetter) >= 0
-	capital := strings.ToUpper(input) == input
-	return haveLetter && capital
-
-}
-
-func isItFineByHim(input string) bool {
-	return strings.TrimSpace(input) == ""
 }
